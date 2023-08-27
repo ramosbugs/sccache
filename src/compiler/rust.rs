@@ -1350,6 +1350,11 @@ where
             )
             .await?;
             let source_hashes = hash_all(&source_files, &source_hashes_pool).await?;
+
+            source_files.iter().zip(source_hashes.iter()).for_each(|(path, hash)| {
+                trace!("[{}]: hash of source file {:?} is {}", crate_name, path, hash);
+            });
+
             Ok((source_files, source_hashes, env_deps))
         };
 
@@ -1367,6 +1372,11 @@ where
             extern_hashes,
             staticlib_hashes
         )?;
+
+        abs_externs.iter().zip(extern_hashes.iter()).for_each(|(path, hash)| {
+            trace!("[{}]: hash of extern {:?} is {}", crate_name, path, hash);
+        });
+
         // If you change any of the inputs to the hash, you should change `CACHE_VERSION`.
         let mut m = Digest::new();
         // Hash inputs:
